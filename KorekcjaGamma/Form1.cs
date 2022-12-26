@@ -11,31 +11,25 @@ using System.Windows.Forms;
 
 namespace KorekcjaGamma
 {
-    public class ImagePixel {
-        public byte R { get; private set; }
-        public byte G { get; private set; }
-        public byte B { get; private set; }
-        public byte A { get; private set; }
-
-        public ImagePixel(byte R, byte G, byte B, byte alpha)
-        {
-            this.R = R;
-            this.G = G;
-            this.B = B;
-            this.A = alpha;
-        }
-    }
     public partial class Form1 : Form
     {
         AssemblerInterface asm;
         private int threadCount;
         private Bitmap imageBitmap;
         private static byte[] finalImageBytes;
+        List<ImagePixel[]> splittedImageBitmapResult;
+
+        //tmp
+        String tmpFilePath = "C:\\Users\\lenovo\\Pictures\\images.jpeg";
         public Form1()
         {
             InitializeComponent();
             threadCount = Environment.ProcessorCount;
             asm = new AssemblerInterface();
+            splittedImageBitmapResult = splitBytesForMultipleThreads(loadImage(tmpFilePath), threadCount);
+            splittedImageBitmapResult.ForEach(imagePxs => {
+                Console.WriteLine(imagePxs[0].B);
+            });
         }
 
         private Bitmap loadImage(String imagePath) {
@@ -44,7 +38,7 @@ namespace KorekcjaGamma
         }
 
         private List<ImagePixel[]> splitBytesForMultipleThreads(Bitmap imageBitmap, int threadCount) {
-            List<ImagePixel[]> splittedImageBitmap = new List<ImagePixel[]>(threadCount);
+            List<ImagePixel[]> splittedImageBitmap = new List<ImagePixel[]>();
             int totalPixelCount = imageBitmap.Width * imageBitmap.Height;
             int rValue = totalPixelCount % threadCount;
             ImagePixel[] imagePixels = new ImagePixel[totalPixelCount];
@@ -56,7 +50,6 @@ namespace KorekcjaGamma
                                                         originalPixel.B, originalPixel.A);
                     i++;
                 }
-                i++;
             }
 
             int fullStop = 0;
@@ -65,12 +58,12 @@ namespace KorekcjaGamma
                 if (rValue > 0)
                 {
                     ln = (int)(totalPixelCount / threadCount) + 1;
-                    splittedImageBitmap[p] = new ImagePixel[ln];
+                    splittedImageBitmap.Add(new ImagePixel[ln]);
                     rValue--;
                 }
                 else {
                     ln = (int)totalPixelCount / threadCount;
-                    splittedImageBitmap[p] = new ImagePixel[ln];
+                    splittedImageBitmap.Add(new ImagePixel[ln]);
                 }
                 Array.Copy(imagePixels, fullStop, splittedImageBitmap[p], 0, ln);
                 fullStop = ln + 1;
@@ -109,5 +102,20 @@ namespace KorekcjaGamma
             DialogResult result = MessageBox.Show(wynik.ToString(),"Test", MessageBoxButtons.OK);
         }
         //---
+    }
+    public class ImagePixel
+    {
+        public byte R { get; private set; }
+        public byte G { get; private set; }
+        public byte B { get; private set; }
+        public byte A { get; private set; }
+
+        public ImagePixel(byte R, byte G, byte B, byte alpha)
+        {
+            this.R = R;
+            this.G = G;
+            this.B = B;
+            this.A = alpha;
+        }
     }
 }
