@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
+using System.IO;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace KorekcjaGamma
@@ -30,6 +26,7 @@ namespace KorekcjaGamma
             splittedImageBitmapResult.ForEach(imagePxs => {
                 Console.WriteLine(imagePxs[0].B);
             });
+            spawnThreads(splittedImageBitmapResult, threadCount);
         }
 
         private Bitmap loadImage(String imagePath) {
@@ -72,27 +69,38 @@ namespace KorekcjaGamma
             return splittedImageBitmap;
         }
 
-        private void SpawnThreads(List<ImagePixel[]> splittedImageBitmap, int threadCount) {
+        private void spawnThreads(List<ImagePixel[]> splittedImageBitmap, int threadCount) {
             ThreadPool.SetMinThreads(threadCount, threadCount);
             ThreadPool.SetMaxThreads(threadCount, threadCount);
             byte[] x;
             for (int i=0; i<threadCount; i++) {
+                var splittedTmp = splittedImageBitmap[i];
                 ThreadPool.QueueUserWorkItem(new WaitCallback(delegate (Object state) {
-                    x = GammaThingWhatever(splittedImageBitmap[i]);
+                    GammaThingWhatever(splittedTmp);
                 }), null);
             }
         }
 
-        private static byte[] GammaThingWhatever(ImagePixel[] pxSlice) {
-            //option one - edit global variable (each thread will lock it for execution time)
+        private static void GammaThingWhatever(ImagePixel[] pxSlice) {
+            //option ONE - edit global variable (each thread will lock it for execution time)
             //dont know how it will influence performance(possible deadlock) 
-            lock (finalImageBytes) { 
-                
-            }
+            //lock (finalImageBytes) { 
+            //    
+            //}
 
-            //option two - return whatever ASM lib returns
+            //option TWO - return whatever ASM lib returns
             //we would need to wait for each thread, not sure about possible consequnces
-            return new byte[1];
+            //return new byte[1];
+
+            //tmp
+            Console.WriteLine("Thread nr. {0}", Thread.CurrentThread.ManagedThreadId);
+            //to test upperbound of threads
+            Thread.Sleep(1000);
+        }
+
+        private void saveFinalToFile(byte[] data, string filePath) {
+            BinaryWriter writer = new BinaryWriter(File.OpenWrite(filePath));
+            writer.Write(data);
         }
 
         //sample code
