@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Threading;
@@ -16,7 +17,7 @@ namespace KorekcjaGamma
         List<ImagePixel[]> splittedImageBitmapResult;
 
         //tmp
-        String tmpFilePath = "C:\\Users\\lenovo\\Pictures\\images.jpeg";
+        String tmpFilePath = "C:\\Users\\Milosz\\Downloads\\example.jpg";
         public Form1()
         {
             InitializeComponent();
@@ -104,10 +105,64 @@ namespace KorekcjaGamma
         }
 
         //sample code
-        private void button1_Click(object sender, EventArgs e)
+        private void asmBtn_Click(object sender, EventArgs e)
         {
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+
             int wynik = asm.executeAsmProcLicz();
             DialogResult result = MessageBox.Show(wynik.ToString(),"Test", MessageBoxButtons.OK);
+
+            stopwatch.Stop();
+            asmTimeLabel.Text = stopwatch.ElapsedMilliseconds + "ms";
+        }
+
+        private void csharpBtn_Click(object sender, EventArgs e)
+        {
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+
+            stopwatch.Stop();
+            csharpTimeLabel.Text = stopwatch.ElapsedMilliseconds + "ms";
+        }
+        private void fileChooserBtn_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog dialog = new OpenFileDialog();
+            dialog.Filter = "jpg files(.*jpg)|*.jpg| PNG files(.*png)|*.png| All Files(*.*)|*.*";
+            DialogResult result = dialog.ShowDialog();
+
+            if (result == DialogResult.OK)
+            {
+                string imgLocation = dialog.FileName;
+                try
+                {
+                    originalImg.ImageLocation = imgLocation;
+                    saveBtn.Enabled = true;
+                    asmBtn.Enabled = true;
+                    csharpBtn.Enabled = true;
+                }
+                catch (IOException)
+                {
+                    MessageBox.Show("Wystapił błąd podczas wczytywania pliku.");
+                }
+            }
+        }
+
+        private void saveBtn_Click(object sender, EventArgs e)
+        {
+            using (SaveFileDialog saveFileDialog = new SaveFileDialog() { Filter = @"PNG|*.png" })
+            {
+                if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    finalImg.Image.Save(saveFileDialog.FileName);
+                    MessageBox.Show("Zdjęcie zostało pomyślnie zapisane.");
+                }
+            }
+        }
+
+        private void threadSlider_Scroll(object sender, EventArgs e)
+        {
+            threadCount = (int)Math.Pow(2, threadSlider.Value);
         }
         //---
     }
