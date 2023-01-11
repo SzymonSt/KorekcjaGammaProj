@@ -5,6 +5,7 @@ using System.Drawing;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
+using BibliotekaCS;
 
 namespace KorekcjaGamma
 {
@@ -12,22 +13,22 @@ namespace KorekcjaGamma
     {
         AssemblerInterface asm;
         private int threadCount;
+        private int totalPixelCount;
         private Bitmap imageBitmap;
-        private static byte[] finalImageBytes;
         List<ImagePixel[]> splittedImageBitmapResult;
 
         //tmp
-        String tmpFilePath = "C:\\Users\\Milosz\\Downloads\\example.jpg";
+        String tmpFilePath = "C:\\Users\\lenovo\\Downloads\\szymon.PNG";
         public Form1()
         {
             InitializeComponent();
             threadCount = Environment.ProcessorCount;
             asm = new AssemblerInterface();
-            splittedImageBitmapResult = splitBytesForMultipleThreads(loadImage(tmpFilePath), threadCount);
-            splittedImageBitmapResult.ForEach(imagePxs => {
+            //splittedImageBitmapResult = splitBytesForMultipleThreads(loadImage(tmpFilePath), threadCount);
+  /*          splittedImageBitmapResult.ForEach(imagePxs => {
                 Console.WriteLine(imagePxs[0].B);
-            });
-            spawnThreads(splittedImageBitmapResult, threadCount);
+            });*/
+            //spawnThreads(splittedImageBitmapResult, threadCount);
         }
 
         private Bitmap loadImage(String imagePath) {
@@ -37,7 +38,7 @@ namespace KorekcjaGamma
 
         private List<ImagePixel[]> splitBytesForMultipleThreads(Bitmap imageBitmap, int threadCount) {
             List<ImagePixel[]> splittedImageBitmap = new List<ImagePixel[]>();
-            int totalPixelCount = imageBitmap.Width * imageBitmap.Height;
+            totalPixelCount = imageBitmap.Width * imageBitmap.Height;
             int rValue = totalPixelCount % threadCount;
             ImagePixel[] imagePixels = new ImagePixel[totalPixelCount];
             int i = 0;
@@ -70,14 +71,12 @@ namespace KorekcjaGamma
             return splittedImageBitmap;
         }
 
-        private void spawnThreads(List<ImagePixel[]> splittedImageBitmap, int threadCount) {
+        private void spawnThreadsForCSLib(List<ImagePixel[]> splittedImageBitmap,int[] luTable ,int threadCount) {
             ThreadPool.SetMinThreads(threadCount, threadCount);
             ThreadPool.SetMaxThreads(threadCount, threadCount);
-            byte[] x;
-            for (int i=0; i<threadCount; i++) {
-                var splittedTmp = splittedImageBitmap[i];
+            for (int i=0; i<threadCount-1; i++) {
                 ThreadPool.QueueUserWorkItem(new WaitCallback(delegate (Object state) {
-                    GammaThingWhatever(splittedTmp);
+                    GammaCorrection.PerformGammaCorrection(splittedImageBitmap[i], luTable);
                 }), null);
             }
         }
@@ -99,9 +98,10 @@ namespace KorekcjaGamma
             Thread.Sleep(1000);
         }
 
-        private void saveFinalToFile(byte[] data, string filePath) {
-            BinaryWriter writer = new BinaryWriter(File.OpenWrite(filePath));
-            writer.Write(data);
+        private Bitmap saveFinalToTmpBitmap(List<ImagePixel[]> data) {
+            Bitmap dt = new Bitmap(imageBitmap.Width, imageBitmap.Height, imageBitmap.PixelFormat);
+            for 
+            return dt;
         }
 
         //sample code
@@ -121,7 +121,10 @@ namespace KorekcjaGamma
         {
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
-
+            splittedImageBitmapResult = splitBytesForMultipleThreads(imageBitmap, threadCount);
+            int[] luTable = GammaCorrection.GenerateLutTable(4);
+            spawnThreadsForCSLib(splittedImageBitmapResult, luTable, threadCount);
+            finalImg.Image = saveFinalToTmpBitmap(splittedImageBitmapResult);
             stopwatch.Stop();
             csharpTimeLabel.Text = stopwatch.ElapsedMilliseconds + "ms";
         }
@@ -137,6 +140,7 @@ namespace KorekcjaGamma
                 try
                 {
                     originalImg.ImageLocation = imgLocation;
+                    imageBitmap = loadImage(imgLocation);
                     saveBtn.Enabled = true;
                     asmBtn.Enabled = true;
                     csharpBtn.Enabled = true;
@@ -165,20 +169,5 @@ namespace KorekcjaGamma
             threadCount = (int)Math.Pow(2, threadSlider.Value);
         }
         //---
-    }
-    public class ImagePixel
-    {
-        public byte R { get; private set; }
-        public byte G { get; private set; }
-        public byte B { get; private set; }
-        public byte A { get; private set; }
-
-        public ImagePixel(byte R, byte G, byte B, byte alpha)
-        {
-            this.R = R;
-            this.G = G;
-            this.B = B;
-            this.A = alpha;
-        }
     }
 }
