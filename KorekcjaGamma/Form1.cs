@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
@@ -15,6 +15,7 @@ namespace KorekcjaGamma
     {
         AssemblerInterface asm;
         private int threadCount;
+        private double gammaValue = 2.2;
         private int totalPixelCount;
         Bitmap imgBitmap;
         byte[] imageBytes;
@@ -23,6 +24,7 @@ namespace KorekcjaGamma
         {
             InitializeComponent();
             threadCount = Environment.ProcessorCount;
+            threadSlider.Value = (int)Math.Log(threadCount, 2);
             asm = new AssemblerInterface();
         }
 
@@ -164,6 +166,26 @@ namespace KorekcjaGamma
         private void threadSlider_Scroll(object sender, EventArgs e)
         {
             //threadCount = (int)Math.Pow(2, threadSlider.Value);
+        }
+
+        private void gammaInput_ValueChanged(object sender, EventArgs e)
+        {
+            double gamma;
+
+            if (gammaInput.Value < 0)
+            {
+                gamma = 0.00;
+            }
+            else if (gammaInput.Value > 4)
+            {
+                gamma = 4.00;
+            }
+            else
+            {
+                gamma = (double)gammaInput.Value;
+            }
+
+            gammaInput.Text = gamma.ToString();
         }
         //---
     }
