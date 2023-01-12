@@ -81,5 +81,14 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BibliotekaCS\BibliotekaCS.csproj">
+      <Project>{cbb2cd12-2d38-4cb9-b693-b45cb77201db}</Project>
+      <Name>BibliotekaCS</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
