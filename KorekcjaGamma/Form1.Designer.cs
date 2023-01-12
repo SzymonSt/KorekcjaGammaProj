@@ -49,9 +49,12 @@ namespace KorekcjaGamma
             this.label10 = new System.Windows.Forms.Label();
             this.asmTimeLabel = new System.Windows.Forms.Label();
             this.csharpTimeLabel = new System.Windows.Forms.Label();
+            this.label11 = new System.Windows.Forms.Label();
+            this.gammaInput = new System.Windows.Forms.NumericUpDown();
             ((System.ComponentModel.ISupportInitialize)(this.threadSlider)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.originalImg)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.finalImg)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gammaInput)).BeginInit();
             this.SuspendLayout();
             // 
             // asmBtn
@@ -180,11 +183,36 @@ namespace KorekcjaGamma
             this.csharpTimeLabel.ForeColor = System.Drawing.Color.White;
             this.csharpTimeLabel.Name = "csharpTimeLabel";
             // 
+            // label11
+            // 
+            resources.ApplyResources(this.label11, "label11");
+            this.label11.ForeColor = System.Drawing.Color.White;
+            this.label11.Name = "label11";
+            // 
+            // gammaInput
+            // 
+            this.gammaInput.DecimalPlaces = 2;
+            resources.ApplyResources(this.gammaInput, "gammaInput");
+            this.gammaInput.Maximum = new decimal(new int[] {
+            4,
+            0,
+            0,
+            0});
+            this.gammaInput.Name = "gammaInput";
+            this.gammaInput.Value = new decimal(new int[] {
+            22,
+            0,
+            0,
+            65536});
+            this.gammaInput.ValueChanged += new System.EventHandler(this.gammaInput_ValueChanged);
+            // 
             // Form1
             // 
             resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(39)))), ((int)(((byte)(37)))), ((int)(((byte)(55)))));
+            this.Controls.Add(this.gammaInput);
+            this.Controls.Add(this.label11);
             this.Controls.Add(this.csharpTimeLabel);
             this.Controls.Add(this.asmTimeLabel);
             this.Controls.Add(this.label10);
@@ -212,6 +240,7 @@ namespace KorekcjaGamma
             ((System.ComponentModel.ISupportInitialize)(this.threadSlider)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.originalImg)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.finalImg)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gammaInput)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -238,6 +267,8 @@ namespace KorekcjaGamma
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Label asmTimeLabel;
         private System.Windows.Forms.Label csharpTimeLabel;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.NumericUpDown gammaInput;
     }
 }
 
