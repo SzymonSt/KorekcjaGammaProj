@@ -1,39 +1,35 @@
 .model flat, stdcall
 
 .data
-    align 16
-    gamma DWORD 2.2
-    lookup_table dword 256 dup(0) 
+    gamma real4 2.2
+    lookup_table db 256 dup(0.0)
+    temp real4 0.0
+    one real4 1.0
+    pow_num real4 0.0
 
 .code
 gen_lut proc
-    ; Load gamma correction factor into xmm0 register
-    movss xmm0, [gamma]
-
-    ; Load lookup table into xmm1 register
-    movups xmm1, [lookup_table]
-
-    ; Loop to generate lookup table values
+    lea edx, lookup_table
+    lea eax, gamma
     mov ecx, 256
+    movss xmm0, [gamma]
+    shufps xmm0,xmm0,0
 generate_loop:
-    ; Multiply current value in lookup table with gamma correction factor
+    movups xmm1, [one]
+    divss xmm1, xmm0
+    movups pow_num, xmm1
+
+    movups xmm1, [temp]
     mulps xmm1, xmm0
+    movups [edx], xmm1
 
-    ; Store result back in lookup table
-    movups [lookup_table], xmm1
+    movss xmm0, [temp]
+    addss xmm0, [one]
+    movss [temp], xmm0
 
-    ; Increment the pointer to the next value in the lookup table
-    add dword ptr [lookup_table], 4
-
-    ; Decrement the counter
+    add edx, 4
     dec ecx
-
-    ; Check if the counter is zero
     jnz generate_loop
-
-    lea eax, [lookup_table]
-
-    ; Return the lookup table
     ret
 
 gen_lut endp
