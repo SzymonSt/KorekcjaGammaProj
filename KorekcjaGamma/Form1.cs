@@ -105,7 +105,7 @@ namespace KorekcjaGamma
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
 
-            int wynik = asm.executeAsmProcLicz();
+            int[] wynik = AssemblerInterface.GenerateLutTable(2.2);
             DialogResult result = MessageBox.Show(wynik.ToString(),"Test", MessageBoxButtons.OK);
 
             stopwatch.Stop();
