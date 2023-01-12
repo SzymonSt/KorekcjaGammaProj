@@ -185,6 +185,7 @@ namespace KorekcjaGamma
                 gamma = (double)gammaInput.Value;
             }
 
+            gammaValue = gamma;
             gammaInput.Text = gamma.ToString();
         }
         //---
