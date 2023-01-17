@@ -12,6 +12,8 @@ namespace BibliotekaCS
         public static int[] GenerateLutTable(double gammaValue) {
             int[] luTable = new int[256];
             for (int i = 0; i < 256; i++) {
+                double tmpGamma = i / 255.0;
+                Console.WriteLine(tmpGamma);
                 int luValue = (int)Math.Floor(255 * Math.Pow((double)(i / 255.0), 1 / gammaValue));
                 if (luValue > 255)
                     luValue = 255;
@@ -32,22 +34,6 @@ namespace BibliotekaCS
                 orginalImagePart[w] = 255;
                 w++;
             }
-        }
-    }
-
-    public class ImagePixel
-    {
-        public byte R { get; set; }
-        public byte G { get; set; }
-        public byte B { get; set; }
-        public byte A { get; set; }
-
-        public ImagePixel(byte R, byte G, byte B, byte alpha)
-        {
-            this.R = R;
-            this.G = G;
-            this.B = B;
-            this.A = alpha;
         }
     }
 }
