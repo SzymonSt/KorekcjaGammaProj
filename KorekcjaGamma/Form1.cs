@@ -55,14 +55,13 @@ namespace KorekcjaGamma
             BitmapData bitmapData = imageBitmap.LockBits(new Rectangle(0, 0, imageBitmap.Width, imageBitmap.Height),
                 System.Drawing.Imaging.ImageLockMode.ReadWrite, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
             int rawDataLength = bitmapData.Stride * bitmapData.Height;
-            Console.WriteLine(rawDataLength);
             byte[] imagePixelRawData = new byte[rawDataLength];
             Marshal.Copy(bitmapData.Scan0, imagePixelRawData, 0, rawDataLength);
             imageBitmap.UnlockBits(bitmapData);
             return imagePixelRawData;
         }
 
-        private void spawnThreadsForCSLib(List<byte[]> splittedImageBitmap,int[] luTable ,int threadCount) {
+        private void spawnThreads(List<byte[]> splittedImageBitmap,int[] luTable ,int threadCount) {
             ThreadPool.SetMinThreads(threadCount, threadCount);
             ThreadPool.SetMaxThreads(threadCount, threadCount);
             var list = new List<int>(threadCount);
@@ -79,8 +78,30 @@ namespace KorekcjaGamma
                     }, list[i]);
                 }
                 calcEvent.Wait();
-                Console.WriteLine(calcEvent.CurrentCount);
             }
+
+        }
+
+        private void spawnThreadsAsm(List<byte[]> splittedImageBitmap, int[] luTable, int threadCount)
+        {
+            AssemblerInterface.PerformGammaCorrection(splittedImageBitmap[0], luTable);
+/*            ThreadPool.SetMinThreads(threadCount, threadCount);
+            ThreadPool.SetMaxThreads(threadCount, threadCount);
+            var list = new List<int>(threadCount);
+            for (var i = 0; i < threadCount; i++) list.Add(i);
+            using (CountdownEvent calcEvent = new CountdownEvent(threadCount))
+            {
+                for (var i = 0; i < threadCount; i++)
+                {
+                    ThreadPool.QueueUserWorkItem(x =>
+                    {
+                        AssemblerInterface.PerformGammaCorrection(splittedImageBitmap[int.Parse(x.ToString())], luTable);
+                        calcEvent.Signal();
+
+                    }, list[i]);
+                }
+                calcEvent.Wait();
+            }*/
 
         }
 
@@ -104,9 +125,14 @@ namespace KorekcjaGamma
         {
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
-
-            int[] wynik = AssemblerInterface.GenerateLutTable(2.2);
-            DialogResult result = MessageBox.Show(wynik.ToString(),"Test", MessageBoxButtons.OK);
+            splittedImageBitmapResult = splitBytesForMultipleThreads(originalImg.Image, threadCount);
+            int[] luTable = GammaCorrection.GenerateLutTable(2.2);
+            spawnThreadsAsm(splittedImageBitmapResult, luTable, threadCount);
+            Console.WriteLine("Done processing");
+            saveFinalToTmpBitmap(splittedImageBitmapResult);
+            finalImg.Image = imgBitmap;
+            //int[] wynik = AssemblerInterface.GenerateLutTable(2.2);
+            //DialogResult result = MessageBox.Show(wynik.ToString(),"Test", MessageBoxButtons.OK);
 
             stopwatch.Stop();
             asmTimeLabel.Text = stopwatch.ElapsedMilliseconds + "ms";
@@ -118,7 +144,7 @@ namespace KorekcjaGamma
             stopwatch.Start();
             splittedImageBitmapResult = splitBytesForMultipleThreads(originalImg.Image, threadCount);
             int[] luTable = GammaCorrection.GenerateLutTable(2.2);
-            spawnThreadsForCSLib(splittedImageBitmapResult, luTable, threadCount);
+            spawnThreads(splittedImageBitmapResult, luTable, threadCount);
             Console.WriteLine("Done processing");
             saveFinalToTmpBitmap(splittedImageBitmapResult);
             finalImg.Image = imgBitmap;
