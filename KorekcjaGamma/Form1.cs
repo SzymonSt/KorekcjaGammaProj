@@ -74,7 +74,7 @@ namespace KorekcjaGamma
                     {
                         GammaCorrection.PerformGammaCorrection(splittedImageBitmap[int.Parse(x.ToString())], luTable);
                         calcEvent.Signal();
-                        
+
                     }, list[i]);
                 }
                 calcEvent.Wait();
@@ -84,8 +84,7 @@ namespace KorekcjaGamma
 
         private void spawnThreadsAsm(List<byte[]> splittedImageBitmap, int[] luTable, int threadCount)
         {
-            AssemblerInterface.PerformGammaCorrection(splittedImageBitmap[0], luTable);
-/*            ThreadPool.SetMinThreads(threadCount, threadCount);
+            ThreadPool.SetMinThreads(threadCount, threadCount);
             ThreadPool.SetMaxThreads(threadCount, threadCount);
             var list = new List<int>(threadCount);
             for (var i = 0; i < threadCount; i++) list.Add(i);
@@ -101,7 +100,7 @@ namespace KorekcjaGamma
                     }, list[i]);
                 }
                 calcEvent.Wait();
-            }*/
+            }
 
         }
 
@@ -127,12 +126,11 @@ namespace KorekcjaGamma
             stopwatch.Start();
             splittedImageBitmapResult = splitBytesForMultipleThreads(originalImg.Image, threadCount);
             int[] luTable = GammaCorrection.GenerateLutTable(2.2);
+            Console.WriteLine("Thread"+threadCount);
             spawnThreadsAsm(splittedImageBitmapResult, luTable, threadCount);
             Console.WriteLine("Done processing");
             saveFinalToTmpBitmap(splittedImageBitmapResult);
             finalImg.Image = imgBitmap;
-            //int[] wynik = AssemblerInterface.GenerateLutTable(2.2);
-            //DialogResult result = MessageBox.Show(wynik.ToString(),"Test", MessageBoxButtons.OK);
 
             stopwatch.Stop();
             asmTimeLabel.Text = stopwatch.ElapsedMilliseconds + "ms";

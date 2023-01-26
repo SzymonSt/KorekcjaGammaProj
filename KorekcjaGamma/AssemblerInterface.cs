@@ -3,19 +3,11 @@ using System.Runtime.InteropServices;
 
 namespace KorekcjaGamma
 {
-    [StructLayout(LayoutKind.Sequential)]
-    public unsafe struct StructToAssembler
-    {
-        public int r;
-        public int g;
-    }
     unsafe class AssemblerInterface
     {
-        public static StructToAssembler struktura = new StructToAssembler();
-        static public int[] aArg1 = { 0, 0, 0, 0 };
 
         [DllImport("BibliotekaASM.dll")]
-        public static unsafe extern StructToAssembler gamma_correction(StructToAssembler* x);
+        public static unsafe extern int gamma_correction(int* r, int* g, int* b, int* r_l, int* g_l, int* b_l);
 
         public static int[] GenerateLutTable(double gammaValue)
         {
@@ -31,27 +23,24 @@ namespace KorekcjaGamma
 
         public static void PerformGammaCorrection(byte[] orginalImagePart, int[] luTable)
         {
-            unsafe
+            int r = new int();
+            int g = new int();
+            int b = new int();
+            int r_l = new int();
+            int g_l = new int();
+            int b_l = new int();
+            for (int i = 0; i < orginalImagePart.Length; i += 4)
             {
-                for (int i = 0; i < orginalImagePart.Length; i += 4)
-                {
-                    struktura.r = orginalImagePart[i];
-                    struktura.g = orginalImagePart[i + 1];
-                    fixed (StructToAssembler* x = &struktura)
-                    {
-                        Console.WriteLine(orginalImagePart[i]);
-                        Console.WriteLine(orginalImagePart[i + 1]);
-                        Console.WriteLine(orginalImagePart[i + 2]);
-                        Console.WriteLine(orginalImagePart[i + 3]);
-                        Console.WriteLine("-------------");
-                        //StructToAssembler y = new StructToAssembler();
-                        gamma_correction(x);
-                        Console.WriteLine("After processing:");
-                        Console.WriteLine("D" + struktura.r);
-                        Console.WriteLine("D" + struktura.g);
-
-                    }
-                }
+                r = orginalImagePart[i];
+                g = orginalImagePart[i + 1];
+                b = orginalImagePart[i + 2];
+                r_l = luTable[(int)orginalImagePart[i]];
+                g_l = luTable[(int)orginalImagePart[i + 1]];
+                b_l = luTable[(int)orginalImagePart[i + 2]];
+                gamma_correction(&r, &g, &b, &r_l, &g_l, &b_l);
+                orginalImagePart[i] = (byte)r;
+                orginalImagePart[i + 1] = (byte)g;
+                orginalImagePart[i + 2] = (byte)b;
             }
         }
     }
