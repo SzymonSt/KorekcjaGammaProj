@@ -24,7 +24,8 @@ namespace KorekcjaGamma
         {
             InitializeComponent();
             threadCount = Environment.ProcessorCount;
-            threadSlider.Value = (int)Math.Log(threadCount, 2);
+            threadSlider.Value = threadCount;
+            threadLabel.Text = threadCount.ToString();
             asm = new AssemblerInterface();
         }
 
@@ -77,7 +78,6 @@ namespace KorekcjaGamma
                     {
                         GammaCorrection.PerformGammaCorrection(splittedImageBitmap[int.Parse(x.ToString())], luTable);
                         calcEvent.Signal();
-                        
                     }, list[i]);
                 }
                 calcEvent.Wait();
@@ -116,6 +116,7 @@ namespace KorekcjaGamma
 
         private void csharpBtn_Click(object sender, EventArgs e)
         {
+            Console.WriteLine("threads: "+threadCount);
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
             splittedImageBitmapResult = splitBytesForMultipleThreads(originalImg.Image, threadCount);
@@ -144,7 +145,7 @@ namespace KorekcjaGamma
                     asmBtn.Enabled = true;
                     csharpBtn.Enabled = true;
                 }
-                catch (IOException)
+                catch (Exception)
                 {
                     MessageBox.Show("Wystapił błąd podczas wczytywania pliku.");
                 }
@@ -165,7 +166,8 @@ namespace KorekcjaGamma
 
         private void threadSlider_Scroll(object sender, EventArgs e)
         {
-            //threadCount = (int)Math.Pow(2, threadSlider.Value);
+            threadCount = threadSlider.Value;
+            threadLabel.Text = threadCount.ToString();
         }
 
         private void gammaInput_ValueChanged(object sender, EventArgs e)
