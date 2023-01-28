@@ -51,6 +51,9 @@ namespace KorekcjaGamma
             this.csharpTimeLabel = new System.Windows.Forms.Label();
             this.label11 = new System.Windows.Forms.Label();
             this.gammaInput = new System.Windows.Forms.NumericUpDown();
+            this.label12 = new System.Windows.Forms.Label();
+            this.threadLabel = new System.Windows.Forms.Label();
+            this.label14 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.threadSlider)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.originalImg)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.finalImg)).BeginInit();
@@ -94,9 +97,11 @@ namespace KorekcjaGamma
             this.threadSlider.Cursor = System.Windows.Forms.Cursors.Hand;
             this.threadSlider.LargeChange = 2;
             resources.ApplyResources(this.threadSlider, "threadSlider");
-            this.threadSlider.Maximum = 6;
+            this.threadSlider.Maximum = 64;
+            this.threadSlider.Minimum = 1;
             this.threadSlider.Name = "threadSlider";
-            this.threadSlider.Value = 1;
+            this.threadSlider.TickStyle = System.Windows.Forms.TickStyle.None;
+            this.threadSlider.Value = 48;
             this.threadSlider.Scroll += new System.EventHandler(this.threadSlider_Scroll);
             // 
             // label1
@@ -119,20 +124,20 @@ namespace KorekcjaGamma
             // 
             // label4
             // 
-            resources.ApplyResources(this.label4, "label4");
             this.label4.ForeColor = System.Drawing.Color.White;
+            resources.ApplyResources(this.label4, "label4");
             this.label4.Name = "label4";
             // 
             // label5
             // 
-            resources.ApplyResources(this.label5, "label5");
             this.label5.ForeColor = System.Drawing.Color.White;
+            resources.ApplyResources(this.label5, "label5");
             this.label5.Name = "label5";
             // 
             // label6
             // 
-            resources.ApplyResources(this.label6, "label6");
             this.label6.ForeColor = System.Drawing.Color.White;
+            resources.ApplyResources(this.label6, "label6");
             this.label6.Name = "label6";
             // 
             // label7
@@ -206,11 +211,32 @@ namespace KorekcjaGamma
             65536});
             this.gammaInput.ValueChanged += new System.EventHandler(this.gammaInput_ValueChanged);
             // 
+            // label12
+            // 
+            resources.ApplyResources(this.label12, "label12");
+            this.label12.ForeColor = System.Drawing.Color.White;
+            this.label12.Name = "label12";
+            // 
+            // threadLabel
+            // 
+            resources.ApplyResources(this.threadLabel, "threadLabel");
+            this.threadLabel.ForeColor = System.Drawing.Color.White;
+            this.threadLabel.Name = "threadLabel";
+            // 
+            // label14
+            // 
+            resources.ApplyResources(this.label14, "label14");
+            this.label14.ForeColor = System.Drawing.Color.White;
+            this.label14.Name = "label14";
+            // 
             // Form1
             // 
             resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(39)))), ((int)(((byte)(37)))), ((int)(((byte)(55)))));
+            this.Controls.Add(this.label14);
+            this.Controls.Add(this.threadLabel);
+            this.Controls.Add(this.label12);
             this.Controls.Add(this.gammaInput);
             this.Controls.Add(this.label11);
             this.Controls.Add(this.csharpTimeLabel);
@@ -269,6 +295,9 @@ namespace KorekcjaGamma
         private System.Windows.Forms.Label csharpTimeLabel;
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.NumericUpDown gammaInput;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.Label threadLabel;
+        private System.Windows.Forms.Label label14;
     }
 }
 
