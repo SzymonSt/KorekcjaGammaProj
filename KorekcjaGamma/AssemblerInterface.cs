@@ -18,7 +18,7 @@ namespace KorekcjaGamma
                 int[] luTable = new int[256];
                 fixed (int* lut = luTable)
                 {
-                    float tmpGamma = (1.0f / 2.2f);
+                    float tmpGamma = (1.0f / (float)gammaValue);
                     float e;
                     for (int i = 0; i < luTable.Length; i++)
                     {
