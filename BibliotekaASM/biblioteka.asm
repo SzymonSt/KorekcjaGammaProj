@@ -1,9 +1,5 @@
 .data
-const dword 10
-counter qword 256
-one dword 1
-tmp real10 2.34
-tmp2 real10 1.2
+multip real4 255.0
 .code
 
 gen_lut proc
@@ -13,18 +9,17 @@ movups [rsp+16], xmm0
 fld real4 ptr [rsp+16]
 movups [rsp+16], xmm1
 fld real4 ptr[rsp+16]
-fyl2x
-fld1
-fld st(1)
-fprem
-f2xm1
-fadd
-fscale
+fyl2x		;x*log2(y)
+fld1		;st(0)=1
+fld st(1)   ;st(0)=st(1), st(1)=1
+fprem		;st(0)%st(1)
+f2xm1		;2^st(0)-1
+fadd		;st(0)++
+fscale		;approx to power of 2
 fstp REAL4 ptr [rsp+16]
 fstp st(0)
-fstp st(0)
-fstp st(0)
 movss xmm1, REAL4 ptr [rsp+16]
+mulps xmm1, [multip]
 movups [rdx], xmm1
 movups [rcx], xmm0
 ret
