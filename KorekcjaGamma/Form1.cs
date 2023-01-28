@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
@@ -15,6 +15,7 @@ namespace KorekcjaGamma
     {
         AssemblerInterface asm;
         private int threadCount;
+        private double gammaValue = 2.2;
         private int totalPixelCount;
         Bitmap imgBitmap;
         byte[] imageBytes;
@@ -23,6 +24,8 @@ namespace KorekcjaGamma
         {
             InitializeComponent();
             threadCount = Environment.ProcessorCount;
+            threadSlider.Value = threadCount;
+            threadLabel.Text = threadCount.ToString();
             asm = new AssemblerInterface();
         }
 
@@ -74,7 +77,6 @@ namespace KorekcjaGamma
                     {
                         GammaCorrection.PerformGammaCorrection(splittedImageBitmap[int.Parse(x.ToString())], luTable);
                         calcEvent.Signal();
-
                     }, list[i]);
                 }
                 calcEvent.Wait();
@@ -96,7 +98,6 @@ namespace KorekcjaGamma
                     {
                         AssemblerInterface.PerformGammaCorrection(splittedImageBitmap[int.Parse(x.ToString())], luTable);
                         calcEvent.Signal();
-
                     }, list[i]);
                 }
                 calcEvent.Wait();
@@ -138,6 +139,7 @@ namespace KorekcjaGamma
 
         private void csharpBtn_Click(object sender, EventArgs e)
         {
+            Console.WriteLine("threads: "+threadCount);
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
             splittedImageBitmapResult = splitBytesForMultipleThreads(originalImg.Image, threadCount);
@@ -166,7 +168,7 @@ namespace KorekcjaGamma
                     asmBtn.Enabled = true;
                     csharpBtn.Enabled = true;
                 }
-                catch (IOException)
+                catch (Exception)
                 {
                     MessageBox.Show("Wystapił błąd podczas wczytywania pliku.");
                 }
@@ -187,7 +189,29 @@ namespace KorekcjaGamma
 
         private void threadSlider_Scroll(object sender, EventArgs e)
         {
-            //threadCount = (int)Math.Pow(2, threadSlider.Value);
+            threadCount = threadSlider.Value;
+            threadLabel.Text = threadCount.ToString();
+        }
+
+        private void gammaInput_ValueChanged(object sender, EventArgs e)
+        {
+            double gamma;
+
+            if (gammaInput.Value < 0)
+            {
+                gamma = 0.00;
+            }
+            else if (gammaInput.Value > 4)
+            {
+                gamma = 4.00;
+            }
+            else
+            {
+                gamma = (double)gammaInput.Value;
+            }
+
+            gammaValue = gamma;
+            gammaInput.Text = gamma.ToString();
         }
         //---
     }
