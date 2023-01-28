@@ -8,16 +8,35 @@ namespace KorekcjaGamma
 
         [DllImport("BibliotekaASM.dll")]
         public static unsafe extern int gamma_correction(int* r, int* g, int* b, int* r_l, int* g_l, int* b_l);
+        [DllImport("BibliotekaASM.dll")]
+        public static unsafe extern int gen_lut(float* gamma_value, float* lut);
 
         public static int[] GenerateLutTable(double gammaValue)
         {
             unsafe
             {
-                //IntPtr lookupTableAddress = gen_lut();
-                //float[] t = new float[256];
-                //float* lookupTable = (float*)lookupTableAddress;
-                //Marshal.Copy(lookupTableAddress, t, 0, 256);
-                return new int[1];
+                int[] luTable = new int[256];
+                fixed (int* lut = luTable)
+                {
+                    float tmpGamma = (1.0f / 2.2f);
+                    float e;
+                    for (int i = 0; i < luTable.Length; i++)
+                    {
+                        e = (float)((float)i/255.0f);
+                        gen_lut(&tmpGamma, &e);
+                        e = (float)(255.0*e);
+                        if (e > 255)
+                        {
+                            e = 255;
+                        }
+                        if (((int)e) < 0)
+                        {
+                            e = 0;
+                        }
+                        lut[i] = (int)e;
+                    }
+                }
+                return luTable;
             }
         }
 

@@ -125,7 +125,7 @@ namespace KorekcjaGamma
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
             splittedImageBitmapResult = splitBytesForMultipleThreads(originalImg.Image, threadCount);
-            int[] luTable = GammaCorrection.GenerateLutTable(2.2);
+            int[] luTable = AssemblerInterface.GenerateLutTable(2.2);
             Console.WriteLine("Thread"+threadCount);
             spawnThreadsAsm(splittedImageBitmapResult, luTable, threadCount);
             Console.WriteLine("Done processing");
