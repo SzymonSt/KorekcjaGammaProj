@@ -24,7 +24,6 @@ namespace KorekcjaGamma
                     {
                         e = (float)((float)i/255.0f);
                         gen_lut(&tmpGamma, &e);
-                        e = (float)(255.0*e);
                         if (e > 255)
                         {
                             e = 255;

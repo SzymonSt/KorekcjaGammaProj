@@ -123,6 +123,7 @@ namespace KorekcjaGamma
         {
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
+            imgBitmap = new Bitmap(originalImg.Image);
             splittedImageBitmapResult = splitBytesForMultipleThreads(originalImg.Image, threadCount);
             int[] luTable = AssemblerInterface.GenerateLutTable(gammaValue);
             Console.WriteLine("Thread"+threadCount);
@@ -130,7 +131,6 @@ namespace KorekcjaGamma
             Console.WriteLine("Done processing");
             saveFinalToTmpBitmap(splittedImageBitmapResult);
             finalImg.Image = imgBitmap;
-            imgBitmap = new Bitmap(originalImg.Image);
             stopwatch.Stop();
             asmTimeLabel.Text = stopwatch.ElapsedMilliseconds + "ms";
         }
@@ -140,13 +140,13 @@ namespace KorekcjaGamma
             Console.WriteLine("threads: "+threadCount);
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
+            imgBitmap = new Bitmap(originalImg.Image);
             splittedImageBitmapResult = splitBytesForMultipleThreads(originalImg.Image, threadCount);
             int[] luTable = GammaCorrection.GenerateLutTable(gammaValue);
             spawnThreads(splittedImageBitmapResult, luTable, threadCount);
             Console.WriteLine("Done processing");
             saveFinalToTmpBitmap(splittedImageBitmapResult);
             finalImg.Image = imgBitmap;
-            imgBitmap = new Bitmap(originalImg.Image);
             stopwatch.Stop();
             csharpTimeLabel.Text = stopwatch.ElapsedMilliseconds + "ms";
         }
