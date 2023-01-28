@@ -34,20 +34,4 @@ namespace BibliotekaCS
             }
         }
     }
-
-    public class ImagePixel
-    {
-        public byte R { get; set; }
-        public byte G { get; set; }
-        public byte B { get; set; }
-        public byte A { get; set; }
-
-        public ImagePixel(byte R, byte G, byte B, byte alpha)
-        {
-            this.R = R;
-            this.G = G;
-            this.B = B;
-            this.A = alpha;
-        }
-    }
 }

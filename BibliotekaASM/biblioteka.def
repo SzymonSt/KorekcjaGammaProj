@@ -1,3 +1,4 @@
-LIBRARY "biblioteka"
-EXPORTS
-licz
+LIBRARY BibliotekaASM
+
+EXPORTS gen_lut
+EXPORTS gamma_correction
